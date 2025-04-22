@@ -1,19 +1,16 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-
-const authRoutes = require('./model/auth.routes');
-
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const authRoutes = require("./routes/auth.routes");
 const app = express();
-app.use(cors());
+
 app.use(express.json());
+app.use("/api/auth", authRoutes);
 
-mongoose.connect('mongodb+srv://Duong01:09112001Duong@test.5glppl5.mongodb.net/?retryWrites=true&w=majority&appName=Test', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-app.use('/api/auth', authRoutes);
-
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB connected");
+    app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+  })
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
