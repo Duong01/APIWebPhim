@@ -7,7 +7,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:8080',
+  origin: 'http://localhost:8080;https://web-phim-wine.vercel.app/',
   credentials: true
 }));
 app.use("/api/auth", authRoutes);
