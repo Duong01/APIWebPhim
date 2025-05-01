@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
+const Comments = require("../model/Comments");
 
 // Đăng ký
 router.post("/register", async (req, res) => {
@@ -37,6 +38,40 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
     res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server", error: err.message });
+  }
+});
+
+// add comments
+router.post("/addcomment", async (req, res) => {
+  const { movieId, userId, username, content } = req.body;
+
+  try {
+    if (!movieId || !userId || !username || !content) {
+      return res.status(400).json({ message: "Thiếu dữ liệu" });
+    }
+
+    const newComment = new Comments({ movieId, userId, username, content });
+    await newComment.save();
+
+    res.status(201).json({ message: "Bình luận đã được thêm", comment: newComment });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server", error: err.message });
+  }
+});
+
+// get comments by movies
+router.get("/getcomments", async (req, res) => {
+  const { movieId } = req.query;
+
+  try {
+    if (!movieId) {
+      return res.status(400).json({ message: "Thiếu movieId" });
+    }
+
+    const comments = await Comments.find({ movieId }).sort({ createdAt: -1 });
+    res.status(200).json(comments);
   } catch (err) {
     res.status(500).json({ message: "Lỗi server", error: err.message });
   }
