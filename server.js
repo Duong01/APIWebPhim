@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors({
   origin: [
     'http://localhost:8080',
-    'https://web-phim-wine.vercel.app'
+    'https://web-phim-one.vercel.app'
   ],
   credentials: true
 }));
