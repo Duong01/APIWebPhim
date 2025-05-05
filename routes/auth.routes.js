@@ -45,14 +45,14 @@ router.post("/login", async (req, res) => {
 
 // add comments
 router.post("/addcomment", async (req, res) => {
-  const { movieId, userId, username, content } = req.body;
+  const { movieId, episode, userId, username, content } = req.body;
 
   try {
-    if (!movieId || !userId || !username || !content) {
+    if (!movieId || !episode || !userId || !username || !content) {
       return res.status(400).json({ message: "Thiếu dữ liệu" });
     }
 
-    const newComment = new Comments({ movieId, userId, username, content });
+    const newComment = new Comments({ movieId, episode, userId, username, content });
     await newComment.save();
 
     res.status(201).json({ message: "Bình luận đã được thêm", comment: newComment });
@@ -63,14 +63,14 @@ router.post("/addcomment", async (req, res) => {
 
 // get comments by movies
 router.get("/getcomments", async (req, res) => {
-  const { movieId } = req.query;
+  const { movieId, episode  } = req.query;
 
   try {
     if (!movieId) {
       return res.status(400).json({ message: "Thiếu movieId" });
     }
 
-    const comments = await Comments.find({ movieId }).sort({ createdAt: -1 });
+    const comments = await Comments.find({ movieId, episode }).sort({ createdAt: -1 });
     res.status(200).json(comments);
   } catch (err) {
     res.status(500).json({ message: "Lỗi server", error: err.message });
